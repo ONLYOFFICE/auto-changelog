@@ -34,6 +34,10 @@ const PACKAGE_FILE = "package.json";
 const PACKAGE_OPTIONS_KEY = "auto-changelog";
 const PREPEND_TOKEN = "<!-- auto-changelog-above -->";
 
+function commaSeparatedList(value) {
+  return value.split(",");
+}
+
 const getOptions = async (argv) => {
   const commandOptions = new Command()
     .option(
@@ -128,6 +132,11 @@ const getOptions = async (argv) => {
     .option("--append-git-tag <string>", "string to append to git tag command")
     .option("--prepend", "prepend changelog to output file")
     .option("--stdout", "output changelog to stdout")
+    .option(
+      "--custom <fields...>",
+      "adds object custom to options. Arguments must be passed in the format --custom key1=value1,key2=value2",
+      commaSeparatedList
+    )
     .version(version)
     .parse(argv)
     .opts();
@@ -186,7 +195,20 @@ const run = async (argv) => {
     buildDate: buildDate,
   };
 
-  const changelog = await compileTemplate(releases, detailInfo, options);
+  const custom = {};
+  if (options.custom?.length) {
+    options.custom.map((f) => {
+      const field = f.split("=");
+      custom[field[0]] = field[1] || null;
+    });
+  }
+
+  const changelog = await compileTemplate(
+    releases,
+    detailInfo,
+    custom,
+    options
+  );
   await write(changelog, options, log);
 };
 

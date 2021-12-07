@@ -44,7 +44,7 @@ Handlebars.registerHelper("commit-list", (context, options) => {
     return "";
   }
 
-  return `${options.hash.heading}\n\n${list}`;
+  return `${options.hash.heading ? options.hash.heading + "\n\n" : ""}${list}`;
 });
 
 Handlebars.registerHelper("matches", function (val, pattern, options) {
@@ -79,7 +79,7 @@ const cleanTemplate = (template) => {
   );
 };
 
-const compileTemplate = async (releases, details, options) => {
+const compileTemplate = async (releases, details, custom, options) => {
   const { template, handlebarsSetup } = options;
   if (handlebarsSetup) {
     const path = /^\//.test(handlebarsSetup)
@@ -95,9 +95,9 @@ const compileTemplate = async (releases, details, options) => {
     COMPILE_OPTIONS
   );
   if (template === "json") {
-    return compile({ releases, details, options });
+    return compile({ releases, details, custom, options });
   }
-  return cleanTemplate(compile({ releases, details, options }));
+  return cleanTemplate(compile({ releases, details, custom, options }));
 };
 
 module.exports = {
