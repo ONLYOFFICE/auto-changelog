@@ -53,6 +53,16 @@ const getGitVersion = async () => {
   return match ? match[0] : null;
 };
 
+const getGitBranchName = async () => {
+  const output = await cmd("git rev-parse --abbrev-ref HEAD");
+  return output ? output.trim() : null;
+};
+
+const getGitHashLastCommit = async (href) => {
+  const output = await cmd("git rev-parse HEAD");
+  return output ? output.trim() : null;
+};
+
 const niceDate = (string) => {
   const date = new Date(string);
   const day = date.getUTCDate();
@@ -115,11 +125,19 @@ const readJson = async (path) => {
   return JSON.parse(await readFile(path));
 };
 
+const getBuildDate = () => {
+  const timeElapsed = Date.now();
+  const today = new Date(timeElapsed);
+  return JSON.stringify(today.toISOString().split(".")[0] + "Z");
+};
+
 module.exports = {
   updateLog,
   formatBytes,
   cmd,
   getGitVersion,
+  getGitBranchName,
+  getGitHashLastCommit,
   niceDate,
   isLink,
   parseLimit,
@@ -129,4 +147,5 @@ module.exports = {
   writeFile,
   fileExists,
   readJson,
+  getBuildDate,
 };

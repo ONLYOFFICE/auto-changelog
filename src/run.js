@@ -12,6 +12,9 @@ const {
   fileExists,
   updateLog,
   formatBytes,
+  getGitBranchName,
+  getGitHashLastCommit,
+  getBuildDate,
 } = require("./utils");
 
 const DEFAULT_OPTIONS = {
@@ -172,7 +175,18 @@ const run = async (argv) => {
   log(`${tags.length} version tags found…`);
   const onParsed = ({ title }) => log(`Fetched ${title}…`);
   const releases = await parseReleases(tags, options, onParsed);
-  const changelog = await compileTemplate(releases, options);
+
+  const hashLastCommit = await getGitHashLastCommit();
+  const currentBranchName = await getGitBranchName();
+  const buildDate = await getBuildDate();
+
+  const detailInfo = {
+    hashLastCommit: hashLastCommit,
+    currentBranchName: currentBranchName,
+    buildDate: buildDate,
+  };
+
+  const changelog = await compileTemplate(releases, detailInfo, options);
   await write(changelog, options, log);
 };
 
