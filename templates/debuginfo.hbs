@@ -1,5 +1,16 @@
+{{#if custom.gatsby}}
+---
+{{#if custom.title}}title: "{{custom.title}}"{{/if}}
+{{#if custom.path}}path: "/{{custom.path}}"{{/if}}
+date: {{details.buildDate}}
+---
+{{/if}}
+## Changelog
+- `Branch Name:` {{details.currentBranchName}}
+- `Hash of last commit:` {{details.hashLastCommit}}
+
 {{#each releases}}
-  {{#commit-list groups heading='## Changelog'}}
+  {{#commit-list groups}}
     ### {{niceDate}}:
       {{#each authors}}
         #### {{author}}: 
