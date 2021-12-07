@@ -196,8 +196,8 @@ const run = async (argv) => {
   }
 
   const custom = {}
-  if (options.custom?.length) {
-    options.custom.map((f) => {
+  if (options.custom && options.custom.length) {
+    options.custom.forEach((f) => {
       const field = f.split('=')
       custom[field[0]] = field[1] || null
     })
